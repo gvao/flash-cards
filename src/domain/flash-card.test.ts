@@ -1,29 +1,5 @@
 import { beforeEach, expect, test } from "vitest";
-
-class Entity {
-	id: string;
-
-	constructor(id?: string) {
-		this.id = id || crypto.randomUUID();
-	}
-}
-
-type FlashCardProps = {
-	id?: string;
-	question: string;
-	answer: string;
-};
-
-class FlashCard extends Entity {
-	question: string;
-	answer: string;
-
-	constructor({ id, question, answer }: FlashCardProps) {
-		super(id);
-		this.question = question;
-		this.answer = answer;
-	}
-}
+import { FlashCard } from "./flash-card";
 
 let sut: FlashCard;
 
