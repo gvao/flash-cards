@@ -23,3 +23,17 @@ test("must ensure the id you choose", () => {
 
 	expect(sut.id).toBe("any_id");
 });
+
+test("should update flashcard with update method", () => {
+	const sut = new FlashCard({
+		id: "any_id",
+		answer: "any_answer",
+		question: "any_question",
+	});
+
+	sut.updateQuestion("question_updated");
+	sut.updateAnswer("answer_updated");
+
+	expect(sut.question).toBe("question_updated");
+	expect(sut.answer).toBe("answer_updated");
+});
