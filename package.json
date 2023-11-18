@@ -4,7 +4,8 @@
   "description": "Projeto de flash cards para memorização.",
   "main": "index.js",
   "scripts": {
-    "test": "npx vitest"
+    "test": "npx vitest",
+    "build": "npx tsc"
   },
   "keywords": [],
   "author": "",
