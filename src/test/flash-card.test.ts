@@ -1,5 +1,5 @@
 import { beforeEach, expect, test } from "vitest";
-import { FlashCard } from "./flash-card";
+import { FlashCard } from "../domain/flash-card";
 
 let sut: FlashCard;
 
