@@ -4,9 +4,12 @@ import { Repository } from "../../../domain/repository";
 export function FlashCardRepositoryInMemory(): Repository<FlashCard> {
     const flashCards: FlashCard[] = []
 
+    const getAll = async (): Promise<FlashCard[]> => flashCards
+
 	return {
-		add(item: FlashCard): void {
+		async add(item: FlashCard): Promise<void> {
             flashCards.push(item)
         },
+        getAll, 
 	};
 }
