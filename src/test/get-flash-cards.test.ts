@@ -1,19 +1,7 @@
 import { beforeEach, expect, test } from "vitest";
-import { CreateFlashCard } from "../use-cases/create-flash-card";
 import { FlashCardRepositoryInMemory } from "../application/repositories/flash-card/inMemory";
-import { FlashCard } from "../domain/flash-card";
-import { Repository } from "../domain/repository";
-
-function GetFlashCards(repository: Repository<FlashCard>) {
-	return async ({ limit = 15, pagination = 0 }) => {
-		const flashcards = await repository.getAll();
-
-		const start = limit * pagination;
-		const end = start + limit;
-
-		return flashcards.slice(start, end);
-	};
-}
+import { FlashCard, Repository } from "../domain";
+import { CreateFlashCard, GetFlashCards } from "../use-cases";
 
 let  repository: Repository<FlashCard>
 
