@@ -6,7 +6,7 @@
   "scripts": {
     "test": "npx vitest",
     "build": "npx tsc",
-    "dev": "rm -r dist/ && npm run build && node --watch .",
+    "dev": "npm run build && node --watch .",
     "start": "node ."
 
   },
