@@ -1,4 +1,5 @@
 import express from "express";
+import cors from "cors";
 import path from "node:path";
 import { FlashCardRepositoryInMemory } from "../repositories/flash-card/inMemory";
 import {
@@ -11,8 +12,10 @@ import {
 const app = express();
 
 const pathPublic = path.join(__dirname, "..", "..", "..", "public");
+
 app.use(express.static(pathPublic));
 app.use(express.json());
+app.use(cors());
 
 const repository = FlashCardRepositoryInMemory();
 
