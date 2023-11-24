@@ -1,4 +1,5 @@
 import { FlashCard, Repository } from "../domain";
+import { InvalidParameter } from "../error";
 
 export const UpdateFlashcardById =
 	(repository: Repository<FlashCard>) =>
@@ -7,11 +8,17 @@ export const UpdateFlashcardById =
 
 		const keys = Object.keys(dataToUpdate);
 
-		if (keys.length === 0) throw new Error("invalid parameters");
+		if (keys.length === 0 || !dataToUpdate) new InvalidParameter();
 
-		keys.forEach((key) => {
-			if (key === "question")
+		for (const key of keys) {
+			if (key === "question") {
 				flashcard.updateQuestion(dataToUpdate[key]!);
-			if (key === "answer") flashcard.updateAnswer(dataToUpdate[key]!);
-		});
+			}
+
+			if (key === "answer") {
+				const value = dataToUpdate[key]!;
+
+				flashcard.updateAnswer(value);
+			}
+		}
 	};
