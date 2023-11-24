@@ -57,7 +57,7 @@ describe("UpdateFlashcardById", () => {
 			(cards) => cards.id === idFakeFlashcard
 		);
 
-		expect(flashCardUpdated?.question).toBe(data.question);
-		expect(flashCardUpdated?.answer).toBe(data.answer);
+		expect(flashCardUpdated?.question).toBe(expectedData.question);
+		expect(flashCardUpdated?.answer).toBe(expectedData.answer);
 	});
 });
