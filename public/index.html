@@ -4,6 +4,24 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <style>
+        #deck {
+            /* margin: 0; */
+            margin: 8px 8px;
+            padding: 8px;
+            list-style: none;
+        }
+        
+        .deck__card {
+            border-bottom: 1px solid;
+
+            display: flex;
+            justify-content: space-between;
+            align-items: center
+        }
+    </style>
+
     <title>flash cards</title>
 </head>
 
@@ -19,15 +37,10 @@
     </form>
 
     <ul id="deck">
-        <li>
-            <h3>Card 01</h3>
-            <p>question 01</p>
-            <p>answer 01</p>
-        </li>
-        <li>
-            <h3>Card 02</h3>
-            <p>question 02</p>
-            <p>answer 02</p>
+        <li class="deck__card" data-id="card-216" contenteditable="true">
+            <h3 class="cards__question">any_question</h3>
+            <p class="cards__answer">any_answer</p>
+            <button>Excluir</button>
         </li>
     </ul>
 

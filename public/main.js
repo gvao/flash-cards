@@ -63,15 +63,17 @@ function MakeDeck() {
 }
 
 function View() {
-	function createCardElement(card, onClick = () => {},) {
+	function createCardElement(card, onClick = () => {}) {
 		const li = document.createElement("li");
-		li.id = `card-${card.id}`;
-		li.setAttribute('contentEditable', 'true');
 		
-		li.addEventListener('input', event => {
-			console.log(event)
-			console.log(event.target)
-		})
+		li.dataset.id = card.id;
+		li.classList.add("deck__card")
+		li.setAttribute("contentEditable", "true");
+
+		li.addEventListener("input", (event) => {
+			console.log(event);
+			console.log(event.target);
+		});
 
 		const question = document.createElement("h3");
 		question.classList.add("cards__question");
