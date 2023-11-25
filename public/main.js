@@ -54,50 +54,64 @@ function MakeDeck() {
 		setState(filtered);
 	};
 
+	const updateById = (id, newValue) => {
+		const cardsUpdated = cards.map(card => {
+			if ( card.id !== id) return card
+
+			return {
+				...card, ...newValue
+			}
+		})
+
+		setState(cardsUpdated)
+	}
+
 	return {
 		getState,
 		createCard,
 		subscribe: observer.subscribe,
 		deleteById,
+		updateById,
 	};
 }
 
 function View() {
-	function createCardElement(card, onClick = () => {}) {
+	function createCardElement(card, onClick = () => {}, onBlur = () => {}) {
 		const li = document.createElement("li");
-		
+
 		li.dataset.id = card.id;
-		li.classList.add("deck__card")
-		li.setAttribute("contentEditable", "true");
-
-		li.addEventListener("input", (event) => {
-			console.log(event);
-			console.log(event.target);
-		});
-
+		li.classList.add("deck__card");
+		
 		const question = document.createElement("h3");
 		question.classList.add("cards__question");
-
+		question.setAttribute("contentEditable", "true");
+		
 		const answer = document.createElement("p");
 		answer.classList.add("cards__answer");
+		answer.setAttribute("contentEditable", "true");
 
 		const button = document.createElement("button");
 		button.textContent = "Excluir";
 		button.addEventListener("click", onClick);
-
+		
 		question.textContent = card.question;
 		answer.textContent = card.answer;
+
+		li.addEventListener("blur", (event) => {
+			console.log(event)
+			onBlur({ id: card.id, question: question.textContent, answer: answer.textContent }, event);
+		});
 
 		li.append(question, answer, button);
 
 		return li;
 	}
 
-	function insertCards(cards = [], callBack) {
+	function insertCards(cards = [], callBack, onBlur) {
 		deck.innerHTML = "";
 
 		const cardElements = cards.map((card) =>
-			createCardElement(card, callBack(card.id))
+			createCardElement(card, callBack(card.id), onBlur)
 		);
 		deck.append(...cardElements);
 	}
@@ -112,7 +126,9 @@ const view = View();
 
 function renderCards() {
 	const cards = flashCards.getState();
-	view.insertCards(cards, flashCards.deleteById);
+	view.insertCards(cards, flashCards.deleteById, ({ id, ...data }) => {
+		flashCards.updateById(id, data)
+	});
 }
 
 form.addEventListener("submit", (event) => {
