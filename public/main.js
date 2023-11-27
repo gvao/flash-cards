@@ -31,16 +31,30 @@ function generateId() {
 	return idRandom;
 }
 
-function MakeDeck() {
-	const observer = Observer();
+function LocalStorageRepository(repositoryName = "cards") {
+	const getAll = () => JSON.parse(localStorage.getItem(repositoryName)) || [];
+	const set = (newData) =>
+		localStorage.setItem(repositoryName, JSON.stringify(newData));
 
+	return {
+		getAll,
+		set,
+	};
+}
+
+function MakeDeck(repository) {
+	const observer = Observer();
 	let cards = [
 		{ question: "any_question", answer: "any_answer", id: generateId() },
 	];
 
+	cards = repository.getAll();
+
 	const getState = () => cards;
+
 	const setState = (newState) => {
 		cards = newState;
+		repository.set(newState);
 		observer.emit();
 	};
 
@@ -55,16 +69,17 @@ function MakeDeck() {
 	};
 
 	const updateById = (id, newValue) => {
-		const cardsUpdated = cards.map(card => {
-			if ( card.id !== id) return card
+		const cardsUpdated = cards.map((card) => {
+			if (card.id !== id) return card;
 
 			return {
-				...card, ...newValue
-			}
-		})
+				...card,
+				...newValue,
+			};
+		});
 
-		setState(cardsUpdated)
-	}
+		setState(cardsUpdated);
+	};
 
 	return {
 		getState,
@@ -77,15 +92,22 @@ function MakeDeck() {
 
 function View() {
 	function createCardElement(card, onClick = () => {}, onBlur = () => {}) {
+		const data = {
+			id: card.id,
+			question: card.question,
+			answer: card.answer,
+		};
+
 		const li = document.createElement("li");
 
 		li.dataset.id = card.id;
 		li.classList.add("deck__card");
-		
+		li.setAttribute("contentEditable", "true");
+
 		const question = document.createElement("h3");
 		question.classList.add("cards__question");
 		question.setAttribute("contentEditable", "true");
-		
+
 		const answer = document.createElement("p");
 		answer.classList.add("cards__answer");
 		answer.setAttribute("contentEditable", "true");
@@ -93,13 +115,28 @@ function View() {
 		const button = document.createElement("button");
 		button.textContent = "Excluir";
 		button.addEventListener("click", onClick);
-		
-		question.textContent = card.question;
-		answer.textContent = card.answer;
+
+		question.textContent = data.question;
+		answer.textContent = data.answer;
+
+		li.addEventListener("input", (event) => {
+			for (const child of li.childNodes) {
+				const className = child.classList.value;
+				const isCard = className.startsWith("card");
+				const type = className.replace("cards__", "");
+				if (isCard) {
+					data[type] = child.textContent;
+				}
+			}
+		});
 
 		li.addEventListener("blur", (event) => {
-			console.log(event)
-			onBlur({ id: card.id, question: question.textContent, answer: answer.textContent }, event);
+			for (const type in data) {
+				const value = data[type];
+				if (value < 3)
+					return alert(`Deve conter pelo menos 3 caracteres ${type}`);
+			}
+			onBlur(data, event);
 		});
 
 		li.append(question, answer, button);
@@ -121,14 +158,15 @@ function View() {
 	};
 }
 
-const flashCards = MakeDeck();
+const repository = LocalStorageRepository();
+const flashCards = MakeDeck(repository);
 const view = View();
 
 function renderCards() {
 	const cards = flashCards.getState();
-	view.insertCards(cards, flashCards.deleteById, ({ id, ...data }) => {
+	view.insertCards(cards, flashCards.deleteById, ({ id, ...data }) =>
 		flashCards.updateById(id, data)
-	});
+	);
 }
 
 form.addEventListener("submit", (event) => {
