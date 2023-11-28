@@ -207,7 +207,7 @@ function View() {
 		deck.innerHTML = "";
 
 		cards.forEach((card) => {
-			view.insertCard(card, flashCards.deleteById, ({ id, ...data }) => {
+			insertCard(card, flashCards.deleteById, ({ id, ...data }) => {
 				const index = flashCards
 					.getState()
 					.findIndex((card) => card.id !== id);
