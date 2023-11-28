@@ -31,8 +31,46 @@ function generateId() {
 	return idRandom;
 }
 
+function flashCardsApi(path = "/api/flashcards") {
+	const URL_BASE = "http://localhost:3333";
+
+	return {
+		async getAll() {
+			const response = await fetch(`${URL_BASE}${path}`);
+
+			return await response.json();
+		},
+
+		async create(data) {
+			const response = await fetch(`${URL_BASE}${path}`, {
+				method: "POST",
+				headers: {
+					"Content-Type": "Application/json",
+				},
+				body: JSON.stringify(data),
+			});
+
+			return await response.json();
+		},
+
+		async deleteById(id) {
+			const response = await fetch(`${URL_BASE}${path}/${id}`, {
+				method: "DELETE",
+				headers: {
+					"Content-Type": "Application/json",
+				},
+			});
+
+			if (!response.ok) throw new Error("bad request");
+
+			return await response.json();
+		},
+	};
+}
+
 function LocalStorageRepository(repositoryName = "cards") {
-	const getAll = () => JSON.parse(localStorage.getItem(repositoryName)) || [];
+	const cards = JSON.parse(localStorage.getItem(repositoryName)) || [];
+	const getAll = () => cards;
 	const set = (newData) =>
 		localStorage.setItem(repositoryName, JSON.stringify(newData));
 
@@ -44,11 +82,15 @@ function LocalStorageRepository(repositoryName = "cards") {
 
 function MakeDeck(repository) {
 	const observer = Observer();
-	let cards = [
-		{ question: "any_question", answer: "any_answer", id: generateId() },
-	];
+	let cards = [];
 
-	cards = repository.getAll();
+	const api = flashCardsApi();
+
+	(async () => {
+		const flashCards = await api.getAll();
+
+		setState(flashCards);
+	})();
 
 	const getState = () => cards;
 
@@ -59,13 +101,15 @@ function MakeDeck(repository) {
 	};
 
 	async function createCard({ question, answer }) {
-		const newCard = { question, answer, id: generateId() };
+		const newCard = await api.create({ question, answer });
 		setState([...cards, newCard]);
 	}
 
-	const deleteById = (id) => () => {
-		const filtered = cards.filter((card) => card.id !== id);
+	const deleteById = (id) => async () => {
+		const { idDeleted, message } = await api.deleteById(id);
+		const filtered = cards.filter((card) => card.id !== idDeleted);
 		setState(filtered);
+		alert(message);
 	};
 
 	const updateById = (id, newValue) => {
@@ -147,9 +191,12 @@ function View() {
 	function insertCards(cards = [], callBack, onBlur) {
 		deck.innerHTML = "";
 
-		const cardElements = cards.map((card) =>
-			createCardElement(card, callBack(card.id), onBlur)
-		);
+		const cardElements = cards
+			.filter((card) => !!card?.id)
+			.map((card) => {
+				console.log(card);
+				return createCardElement(card, callBack(card.id), onBlur);
+			});
 		deck.append(...cardElements);
 	}
 
