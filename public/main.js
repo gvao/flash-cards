@@ -78,8 +78,8 @@ function flashCardsApi(path = "/api/flashcards") {
 }
 
 function LocalStorageRepository(repositoryName = "cards") {
-	const cards = JSON.parse(localStorage.getItem(repositoryName)) || [];
-	const getAll = () => cards;
+	const getAll = () => JSON.parse(localStorage.getItem(repositoryName)) || [];
+
 	const set = (newData) =>
 		localStorage.setItem(repositoryName, JSON.stringify(newData));
 
@@ -111,18 +111,21 @@ function MakeDeck(repository) {
 
 	async function createCard({ question, answer }) {
 		const newCard = await api.create({ question, answer });
+		console.log(`created new card: `, newCard);
 		setState([...cards, newCard]);
 	}
 
 	const deleteById = (id) => async () => {
 		const { idDeleted, message } = await api.deleteById(id);
+		console.log(`Delete id: ${idDeleted}\n`, message);
 		const filtered = cards.filter((card) => card.id !== idDeleted);
 		setState(filtered);
 		alert(message);
 	};
 
 	const updateById = async (id, newValue) => {
-		const response = await api.updateById(id, newValue);
+		await api.updateById(id, newValue);
+		console.log(`updateById: `, newValue);
 
 		const cardsUpdated = cards.map((card) => {
 			if (card.id !== id) return card;
