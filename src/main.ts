@@ -1,4 +1,4 @@
-import { createServer } from "node:http";
+import { createServer } from "http";
 import { app } from "./application/server";
 
 const PORT = process.env.PORT || 3333;
