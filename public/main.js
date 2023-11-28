@@ -32,7 +32,7 @@ function generateId() {
 }
 
 function flashCardsApi(path = "/api/flashcards") {
-	const URL_BASE = "http://localhost:3333";
+	const URL_BASE = "";
 
 	return {
 		async getAll() {
@@ -56,12 +56,21 @@ function flashCardsApi(path = "/api/flashcards") {
 		async deleteById(id) {
 			const response = await fetch(`${URL_BASE}${path}/${id}`, {
 				method: "DELETE",
-				headers: {
-					"Content-Type": "Application/json",
-				},
 			});
 
 			if (!response.ok) throw new Error("bad request");
+
+			return await response.json();
+		},
+
+		async updateById(id, newValue) {
+			const response = await fetch(`${URL_BASE}${path}/${id}`, {
+				method: "PUT",
+				headers: {
+					"Content-Type": "Application/json",
+				},
+				body: JSON.stringify(newValue),
+			});
 
 			return await response.json();
 		},
@@ -112,7 +121,9 @@ function MakeDeck(repository) {
 		alert(message);
 	};
 
-	const updateById = (id, newValue) => {
+	const updateById = async (id, newValue) => {
+		const response = await api.updateById(id, newValue);
+
 		const cardsUpdated = cards.map((card) => {
 			if (card.id !== id) return card;
 
@@ -150,15 +161,14 @@ function View() {
 
 		const question = document.createElement("h3");
 		question.classList.add("cards__question");
-		question.setAttribute("contentEditable", "true");
 
 		const answer = document.createElement("p");
 		answer.classList.add("cards__answer");
-		answer.setAttribute("contentEditable", "true");
 
 		const button = document.createElement("button");
 		button.textContent = "Excluir";
 		button.addEventListener("click", onClick);
+		button.setAttribute("contentEditable", false);
 
 		question.textContent = data.question;
 		answer.textContent = data.answer;
@@ -188,33 +198,33 @@ function View() {
 		return li;
 	}
 
-	function insertCards(cards = [], callBack, onBlur) {
+	function insertCard(card, callBack, onBlur) {
+		const flashcard = createCardElement(card, callBack(card.id), onBlur);
+		deck.append(flashcard);
+	}
+
+	function renderCards(cards) {
 		deck.innerHTML = "";
 
-		const cardElements = cards
-			.filter((card) => !!card?.id)
-			.map((card) => {
-				console.log(card);
-				return createCardElement(card, callBack(card.id), onBlur);
+		cards.forEach((card) => {
+			view.insertCard(card, flashCards.deleteById, ({ id, ...data }) => {
+				const index = flashCards
+					.getState()
+					.findIndex((card) => card.id !== id);
+
+				if (!index) flashCards.updateById(id, data);
 			});
-		deck.append(...cardElements);
+		});
 	}
 
 	return {
-		insertCards,
+		renderCards,
 	};
 }
 
 const repository = LocalStorageRepository();
 const flashCards = MakeDeck(repository);
 const view = View();
-
-function renderCards() {
-	const cards = flashCards.getState();
-	view.insertCards(cards, flashCards.deleteById, ({ id, ...data }) =>
-		flashCards.updateById(id, data)
-	);
-}
 
 form.addEventListener("submit", (event) => {
 	event.preventDefault();
@@ -223,5 +233,7 @@ form.addEventListener("submit", (event) => {
 	form.reset();
 });
 
-flashCards.subscribe(renderCards);
-renderCards();
+view.renderCards(flashCards.getState());
+flashCards.subscribe(() => {
+	view.renderCards(flashCards.getState());
+});
