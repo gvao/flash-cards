@@ -1,6 +1,6 @@
 import express from "express";
 import cors from "cors";
-import path from "node:path";
+import path from "path";
 import { FlashCardRepositoryInMemory } from "../repositories/flash-card/inMemory";
 import {
 	CreateFlashCard,
@@ -69,16 +69,16 @@ app.delete("/api/flashcards/:id", async (req, res) => {
 		await deleteFlashCard.byId(id);
 		res.status(201).json({
 			idDeleted: id,
-			message: 'deleted successfully'
+			message: "deleted successfully",
 		});
 	} catch (err) {
-		const error = err as Error
+		const error = err as Error;
 
-		if(error.message === 'not found') {
+		if (error.message === "not found") {
 			res.status(404).json({
 				idDeleted: id,
-				message: `deleted error: ${error.message}`
-			})
+				message: `deleted error: ${error.message}`,
+			});
 		}
 	}
 });
