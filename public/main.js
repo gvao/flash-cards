@@ -220,11 +220,7 @@ function View() {
 
 		cards.forEach((card) => {
 			insertCard(card, flashCards.deleteById, ({ id, ...data }) => {
-				const index = flashCards
-					.getState()
-					.findIndex((card) => card.id !== id);
-
-				if (!index) flashCards.updateById(id, data);
+				flashCards.updateById(id, data);
 			});
 		});
 	}
