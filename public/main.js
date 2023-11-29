@@ -43,7 +43,7 @@ async function fetchApi(path = "/api/flashcards", options) {
 }
 
 function flashCardsApi() {
-	const path = "/api/flashcards"
+	const path = "/api/flashcards";
 
 	return {
 		async getAll() {
@@ -238,10 +238,10 @@ const repository = LocalStorageRepository();
 const flashCards = MakeDeck(repository);
 const view = View();
 
-form.addEventListener("submit", (event) => {
+form.addEventListener("submit", async (event) => {
 	event.preventDefault();
 	const data = { question: question.value, answer: answer.value };
-	flashCards.createCard(data);
+	await flashCards.createCard(data).catch(console.error);
 	form.reset();
 });
 
