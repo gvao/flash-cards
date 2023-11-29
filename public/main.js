@@ -245,3 +245,17 @@ view.renderCards(flashCards.getState());
 flashCards.subscribe(() => {
 	view.renderCards(flashCards.getState());
 });
+
+flashCards.subscribe(() => {
+	deck.style.position = "relative";
+
+	const childs = Array.from(deck.children);
+	childs.forEach((card, index) => {
+		card.style.position = "absolute";
+		card.style.top = `${0.9 * index * 10}%`;
+		card.style.left = `${0.5 * index * 10}%`;
+		card.style.zIndex = ++index;
+		const { zIndex, top, left } = getComputedStyle(card);
+		console.log({ zIndex, top, left });
+	});
+});
