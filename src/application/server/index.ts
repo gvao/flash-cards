@@ -21,7 +21,7 @@ const repository = FlashCardRepositoryInMemory();
 
 app.get("/api/flashcards", async (req, res) => {
 	const getFlashCards = GetFlashCards(repository);
-	const flashcards = await getFlashCards({});
+	const flashcards = await getFlashCards({}).catch(console.error)
 
 	res.status(200).json(flashcards);
 });
@@ -32,7 +32,7 @@ app.post("/api/flashcards", async (req, res) => {
 	} = req;
 
 	const createFlashcards = CreateFlashCard(repository);
-	const flashcard = await createFlashcards({ question, answer });
+	const flashcard = await createFlashcards({ question, answer }).catch(console.error)
 
 	res.status(201).json(flashcard);
 });
