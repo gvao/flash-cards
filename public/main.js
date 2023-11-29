@@ -3,6 +3,9 @@ const question = document.querySelector("#question");
 const answer = document.querySelector("#answer");
 const deck = document.getElementById("deck");
 
+// const URL_BASE = "http://localhost:3333";
+const URL_BASE = "";
+
 function Observer() {
 	const subscribers = [];
 
@@ -31,16 +34,16 @@ function generateId() {
 	return idRandom;
 }
 
-async function fetchApi (path = "/api/flashcards", options) {
-	const response = await fetch(`${URL_BASE}${path}`, options).catch(console.error)
+async function fetchApi(path = "/api/flashcards", options) {
+	const response = await fetch(path, options).catch(console.error);
 
-	if(!response.ok) throw new Error('bad request')
+	if (!response.ok) throw new Error("bad request");
 
-	return response
+	return response;
 }
 
-function flashCardsApi(path = "/api/flashcards") {
-	const URL_BASE = "";
+function flashCardsApi() {
+	const path = "/api/flashcards"
 
 	return {
 		async getAll() {
