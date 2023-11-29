@@ -31,18 +31,26 @@ function generateId() {
 	return idRandom;
 }
 
+async function fetchApi (path = "/api/flashcards", options) {
+	const response = await fetch(`${URL_BASE}${path}`, options).catch(console.error)
+
+	if(!response.ok) throw new Error('bad request')
+
+	return response
+}
+
 function flashCardsApi(path = "/api/flashcards") {
 	const URL_BASE = "";
 
 	return {
 		async getAll() {
-			const response = await fetch(`${URL_BASE}${path}`);
+			const response = await fetchApi(`${URL_BASE}${path}`);
 
 			return await response.json();
 		},
 
 		async create(data) {
-			const response = await fetch(`${URL_BASE}${path}`, {
+			const response = await fetchApi(`${URL_BASE}${path}`, {
 				method: "POST",
 				headers: {
 					"Content-Type": "Application/json",
@@ -54,17 +62,15 @@ function flashCardsApi(path = "/api/flashcards") {
 		},
 
 		async deleteById(id) {
-			const response = await fetch(`${URL_BASE}${path}/${id}`, {
+			const response = await fetchApi(`${URL_BASE}${path}/${id}`, {
 				method: "DELETE",
 			});
-
-			if (!response.ok) throw new Error("bad request");
 
 			return await response.json();
 		},
 
 		async updateById(id, newValue) {
-			const response = await fetch(`${URL_BASE}${path}/${id}`, {
+			const response = await fetchApi(`${URL_BASE}${path}/${id}`, {
 				method: "PUT",
 				headers: {
 					"Content-Type": "Application/json",
