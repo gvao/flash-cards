@@ -1,4 +1,4 @@
-export function LocalStorageRepository(repositoryName = "cards") {
+export default  function LocalStorageRepository(repositoryName = "cards") {
 	const getAll = () => JSON.parse(localStorage.getItem(repositoryName)) || [];
 
 	const set = (newData) =>
