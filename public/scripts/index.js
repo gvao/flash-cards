@@ -1,3 +1,5 @@
+import View from "./view.js";
+
 const form = document.querySelector("#form-flashcards");
 const question = document.querySelector("#question");
 const answer = document.querySelector("#answer");
@@ -157,78 +159,78 @@ function MakeDeck(repository) {
 	};
 }
 
-function View() {
-	function createCardElement(card, onClick = () => {}, onBlur = () => {}) {
-		const data = {
-			id: card.id,
-			question: card.question,
-			answer: card.answer,
-		};
+// function View() {
+// 	function createCardElement(card, onClick = () => {}, onBlur = () => {}) {
+// 		const data = {
+// 			id: card.id,
+// 			question: card.question,
+// 			answer: card.answer,
+// 		};
 
-		const li = document.createElement("li");
+// 		const li = document.createElement("li");
 
-		li.dataset.id = card.id;
-		li.classList.add("deck__card");
-		li.setAttribute("contentEditable", "true");
+// 		li.dataset.id = card.id;
+// 		li.classList.add("deck__card");
+// 		li.setAttribute("contentEditable", "true");
 
-		const question = document.createElement("h3");
-		question.classList.add("cards__question");
+// 		const question = document.createElement("h3");
+// 		question.classList.add("cards__question");
 
-		const answer = document.createElement("p");
-		answer.classList.add("cards__answer");
+// 		const answer = document.createElement("p");
+// 		answer.classList.add("cards__answer");
 
-		const button = document.createElement("button");
-		button.textContent = "Excluir";
-		button.addEventListener("click", onClick);
-		button.setAttribute("contentEditable", false);
+// 		const button = document.createElement("button");
+// 		button.textContent = "Excluir";
+// 		button.addEventListener("click", onClick);
+// 		button.setAttribute("contentEditable", false);
 
-		question.textContent = data.question;
-		answer.textContent = data.answer;
+// 		question.textContent = data.question;
+// 		answer.textContent = data.answer;
 
-		li.addEventListener("input", (event) => {
-			for (const child of li.childNodes) {
-				const className = child.classList.value;
-				const isCard = className.startsWith("card");
-				const type = className.replace("cards__", "");
-				if (isCard) {
-					data[type] = child.textContent;
-				}
-			}
-		});
+// 		li.addEventListener("input", (event) => {
+// 			for (const child of li.childNodes) {
+// 				const className = child.classList.value;
+// 				const isCard = className.startsWith("card");
+// 				const type = className.replace("cards__", "");
+// 				if (isCard) {
+// 					data[type] = child.textContent;
+// 				}
+// 			}
+// 		});
 
-		li.addEventListener("blur", (event) => {
-			for (const type in data) {
-				const value = data[type];
-				if (value < 3)
-					return alert(`Deve conter pelo menos 3 caracteres ${type}`);
-			}
-			onBlur(data, event);
-		});
+// 		li.addEventListener("blur", (event) => {
+// 			for (const type in data) {
+// 				const value = data[type];
+// 				if (value < 3)
+// 					return alert(`Deve conter pelo menos 3 caracteres ${type}`);
+// 			}
+// 			onBlur(data, event);
+// 		});
 
-		li.append(question, answer, button);
+// 		li.append(question, answer, button);
 
-		return li;
-	}
+// 		return li;
+// 	}
 
-	function insertCard(card, callBack, onBlur) {
-		const flashcard = createCardElement(card, callBack(card.id), onBlur);
-		deck.append(flashcard);
-	}
+// 	function insertCard(card, callBack, onBlur) {
+// 		const flashcard = createCardElement(card, callBack(card.id), onBlur);
+// 		deck.append(flashcard);
+// 	}
 
-	function renderCards(cards) {
-		deck.innerHTML = "";
+// 	function renderCards(cards) {
+// 		deck.innerHTML = "";
 
-		cards.forEach((card) => {
-			insertCard(card, flashCards.deleteById, ({ id, ...data }) => {
-				flashCards.updateById(id, data);
-			});
-		});
-	}
+// 		cards.forEach((card) => {
+// 			insertCard(card, flashCards.deleteById, ({ id, ...data }) => {
+// 				flashCards.updateById(id, data);
+// 			});
+// 		});
+// 	}
 
-	return {
-		renderCards,
-	};
-}
+// 	return {
+// 		renderCards,
+// 	};
+// }
 
 const repository = LocalStorageRepository();
 const flashCards = MakeDeck(repository);
@@ -241,10 +243,18 @@ form.addEventListener("submit", async (event) => {
 	form.reset();
 });
 
-view.renderCards(flashCards.getState());
-flashCards.subscribe(() => {
-	view.renderCards(flashCards.getState());
-});
+function RenderCards () {
+	view.renderCards(flashCards.getState(), {
+		deleteById: flashCards.deleteById,
+		updateById: ({ id, ...data }) => {
+			flashCards.updateById(id, data);
+		},
+	});
+
+}
+
+flashCards.subscribe(RenderCards);
+RenderCards()
 
 flashCards.subscribe(() => {
 	deck.style.position = "relative";
