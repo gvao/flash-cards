@@ -1,40 +1,13 @@
 import View from "./view.js";
+import { Observer } from "./utils/observer.js";
+import { LocalStorageRepository } from "./repository/LocalStorageRepository.js";
 
 const form = document.querySelector("#form-flashcards");
 const question = document.querySelector("#question");
 const answer = document.querySelector("#answer");
 const deck = document.getElementById("deck");
 
-// const URL_BASE = "http://localhost:3333";
 const URL_BASE = "";
-
-function Observer() {
-	const subscribers = [];
-
-	const subscribe = (listener) => {
-		subscribers.push(listener);
-	};
-	const emit = () => subscribers.forEach((listener) => listener());
-	return {
-		subscribe,
-		emit,
-	};
-}
-
-function generateId() {
-	const idHistory = {};
-
-	const idRandom = Math.round(Math.random() * 1000);
-
-	if (!!idHistory[idRandom]) return generateId();
-
-	idHistory[idRandom] = {
-		createdAt: Date.now(),
-		id: idRandom,
-	};
-
-	return idRandom;
-}
 
 async function fetchApi(path = "/api/flashcards", options) {
 	const response = await fetch(path, options).catch(console.error);
@@ -88,17 +61,6 @@ function flashCardsApi() {
 	};
 }
 
-function LocalStorageRepository(repositoryName = "cards") {
-	const getAll = () => JSON.parse(localStorage.getItem(repositoryName)) || [];
-
-	const set = (newData) =>
-		localStorage.setItem(repositoryName, JSON.stringify(newData));
-
-	return {
-		getAll,
-		set,
-	};
-}
 
 function MakeDeck(repository) {
 	const observer = Observer();
@@ -243,18 +205,17 @@ form.addEventListener("submit", async (event) => {
 	form.reset();
 });
 
-function RenderCards () {
+function RenderCards() {
 	view.renderCards(flashCards.getState(), {
 		deleteById: flashCards.deleteById,
 		updateById: ({ id, ...data }) => {
 			flashCards.updateById(id, data);
 		},
 	});
-
 }
 
 flashCards.subscribe(RenderCards);
-RenderCards()
+RenderCards();
 
 flashCards.subscribe(() => {
 	deck.style.position = "relative";
