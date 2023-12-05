@@ -22,13 +22,33 @@
     <ul id="deck">
         <li data-id="28257254-5637-4d47-bec6-25d69f6e8d1c" class="deck__card" contenteditable="true">
             <h3 class="cards__question">teste</h3>
-            <p class="cards__answer">testing</p>
-            <button contenteditable="false">Excluir</button>
-        </li>
-        <li data-id="28257254-5637-4d47-bec6-25d69f6e8d1c" class="deck__card" contenteditable="true">
-            <h3 class="cards__question">teste</h3>
-            <p class="cards__answer">testing</p>
-            <button contenteditable="false">Excluir</button>
+
+            <form class="form-difficulty">
+                <p class="cards__answer">testing</p>
+
+                <fieldset class="difficulty-cards">
+                    <legend>Dificuldade</legend>
+                    <div class="card__difficulty">
+                        <input type="radio" name="difficulty" id="difficulty-hard">
+                        <label for="difficulty-hard">dificil</label>
+                    </div>
+                    <div class="card__difficulty">
+                        <input type="radio" name="difficulty" id="difficulty-med">
+                        <label for="difficulty-med">médio</label>
+                    </div>
+                    <div class="card__difficulty">
+                        <input type="radio" name="difficulty" id="difficulty-easy">
+                        <label for="difficulty-easy">fácil</label>
+                    </div>
+
+                </fieldset>
+            </form>
+
+            <form class="form-question">
+                <input type="text" name="answer__input" id="answer__input" autofocus placeholder="Sua resposta aqui">
+                <button type="submit">Responder</button>
+            </form>
+
         </li>
     </ul>
 

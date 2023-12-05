@@ -1,23 +1,28 @@
 @import url('./reset.css');
+@import url('./form.css');
+
 
 body {
     background-color: whitesmoke;
 }
 
 #deck {
+    position: relative;
     margin: 8px 8px;
-    padding: 8px;
+    padding: 16px 8px;
     list-style: none;
+}
 
-    display: flex;
-    flex-direction: column;
-    gap: 4px;
+#deck [data-hide="true"] {
+    display: none;
 }
 
 .deck__card {
+    position: absolute;
     background-color: white;
 
     min-height: 30px;
+    max-height: 80vh;
     min-width: 50%;
 
     display: flex;
@@ -25,9 +30,8 @@ body {
     justify-content: space-between;
     align-items: center;
 
-    /* border-bottom: 1px solid; */
     border-radius: 4px;
-
+    border: 3px solid rgba(0, 0, 0, 0.1);
 
     box-shadow: 2px 2px 6px rgba(0, 0, 0, 0.3);
 
@@ -37,6 +41,9 @@ body {
 }
 
 .cards__answer {
-    display: none;
+    display: block;
+}
 
+.form-answer {
+    display: block;
 }
