@@ -1,0 +1,32 @@
+#form-flashcards {
+    padding: 16px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    align-items: center;
+    justify-content: space-evenly;
+}
+
+#form-flashcards * {
+    border-radius: 4px;
+    border: none;
+}
+
+#form-flashcards input {
+    flex-basis: 40%;
+    flex-grow: 1;
+    padding: 8px 16px;
+    border: 1px solid rgba(0, 0, 0, 0.3);
+    outline: none;
+}
+
+#form-flashcards input:focus {
+    box-shadow: 1px 1px 5px rgba(11, 66, 162, 0.621);
+}
+
+#form-flashcards button {
+    padding: 8px 16px;
+    text-transform: uppercase;
+    font-weight: bold;
+    box-shadow: 1px 1px 5px rgba(11, 66, 162, 0.621);
+}

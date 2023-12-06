@@ -1,8 +1,13 @@
 @import url('./reset.css');
 @import url('./form.css');
+@import url('./form-flashCards.css');
 
+html {
+    height: 100%;
+}
 
 body {
+    font-family: Arial, Helvetica, sans-serif;
     background-color: whitesmoke;
 }
 
