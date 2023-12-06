@@ -16,19 +16,19 @@ body {
     margin: 8px 8px;
     padding: 16px 8px;
     list-style: none;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
 }
 
-#deck [data-hide="true"] {
+#deck *[data-hide="true"] {
     display: none;
 }
 
 .deck__card {
-    /* position: absolute; */
     background-color: white;
-
-    min-height: 30px;
-    max-height: 80vh;
-    min-width: 50%;
+    width: 100%;
+    flex: 1 1;
 
     display: flex;
     flex-direction: column;
