@@ -23,7 +23,7 @@ body {
 }
 
 .deck__card {
-    position: absolute;
+    /* position: absolute; */
     background-color: white;
 
     min-height: 30px;
