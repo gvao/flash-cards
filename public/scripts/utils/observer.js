@@ -4,9 +4,9 @@ export function Observer() {
 	const subscribe = (listener) => {
 		subscribers.push(listener);
 	};
-	const emit = () => subscribers.forEach((listener) => listener());
+	const notifyAll = () => subscribers.forEach((listener) => listener());
 	return {
 		subscribe,
-		emit,
+		notifyAll,
 	};
 }
