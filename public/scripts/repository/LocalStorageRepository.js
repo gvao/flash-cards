@@ -1,21 +1,27 @@
-/**  
- * @typedef {object} methods 
- * @property {any[]} getAll
- * @property {void} set
-*/
-/**
- * @param {string} repositoryName 
- * @returns {methods}
- */
+import Card from "../domain/entity/card.js";
 
-export default function LocalStorageRepository(repositoryName = "cards") {
-	const getAll = () => JSON.parse(localStorage.getItem(repositoryName)) || [];
+export default class Repository {
+	/**@type {Card[]} */
+	_cards
 
-	const set = (newData) =>
-		localStorage.setItem(repositoryName, JSON.stringify(newData));
+	constructor(repositoryName = 'cards') {
+		this.repositoryName = repositoryName;
+		this._cards = JSON.parse(localStorage.getItem(repositoryName)) || []
+	}
 
-	return {
-		getAll,
-		set,
-	};
+	/**
+	 * @returns {Card[]}
+	 */
+	getAll() {
+		return this._cards.map(card => new Card(card))
+	}
+
+	/**
+	* @param {Partial<Card>} value 
+	* @returns {void}
+	*/
+	set(value) {
+		localStorage.setItem(this.repositoryName, JSON.stringify(value));
+		this._cards = value
+	}
 }
