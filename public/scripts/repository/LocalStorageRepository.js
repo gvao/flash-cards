@@ -1,8 +1,12 @@
 import Card from "../domain/entity/card.js";
+import { Observer } from "../utils/observer.js";
 
 export default class Repository {
-	/**@type {Card[]} */
+	/** @type {Card[]} */
 	_cards
+
+	/** @private */
+	_observer = Observer()
 
 	constructor(repositoryName = 'cards') {
 		this.repositoryName = repositoryName;
@@ -23,5 +27,8 @@ export default class Repository {
 	set(value) {
 		localStorage.setItem(this.repositoryName, JSON.stringify(value));
 		this._cards = value
+		this._observer.notifyAll()
 	}
+
+	subscribe = (listener) => listener && this._observer.subscribe(listener)
 }
