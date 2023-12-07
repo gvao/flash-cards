@@ -1,26 +1,27 @@
-import View from './view.js'
 import { generateId } from '../../utils/generateId.js'
 
 export default class Card {
-    element;
     question
     id
     DAYS_TO_REVIEW = 2
     createdAt
+    /**
+     * @private
+     */
+    _isReview = true
 
     constructor(props) {
         const { id, question, answer } = props
         this.question = question
         this.answer = answer
         this.id = id || generateId()
-        this.element = new View(props).element
         this.createdAt = new Date()
     }
 
     get isReview() {
         if (!this.reviewAt) return true
-
-        return this.reviewAt.getTime() < Date.now()
+        this._isReview = this.reviewAt.getTime() < Date.now()
+        return this._isReview
     }
 
     /**
