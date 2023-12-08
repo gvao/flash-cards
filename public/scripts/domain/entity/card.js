@@ -18,14 +18,11 @@ export default class Card {
         this.answer = answer
         this.id = id || generateId()
         this.createdAt = createdAt || new Date()
-        this._isReview = _isReview
+        this._isReview = typeof _isReview === 'undefined' ? true : _isReview
         this.reviewAt = reviewAt ? new Date(reviewAt) : null
     }
 
     get isReview() {
-        // if (!this.reviewAt) return true
-        // this._isReview = this.reviewAt.getTime() < Date.now()
-        // console.log(`is review`, this.reviewAt.getTime() < Date.now())
         return this._isReview
     }
 

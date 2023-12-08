@@ -17,6 +17,7 @@ function handlerEvent(event) {
     const [question, answer] = inputs.map(input => input.value)
 
     cardService.addNewCard({ question, answer })
+    formQuestion.reset()
 }
 
 formQuestion.addEventListener('submit', handlerEvent)
@@ -26,4 +27,5 @@ repository.subscribe(() => {
 })
 
 const cards = cardService.getCardsReviewIs(true)
+console.log(cards)
 renderCards.render(cards)
