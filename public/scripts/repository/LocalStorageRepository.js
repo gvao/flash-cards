@@ -7,10 +7,13 @@ export default class Repository {
 
 	/** @private */
 	_observer = Observer()
+	notify = this._observer.notifyAll
+	subscribe = this._observer.subscribe
+	print = (...args) => console.log(`[localStorageRepository]: `, ...args)
 
 	constructor(repositoryName = 'cards') {
 		this.repositoryName = repositoryName;
-		this._cards = JSON.parse(localStorage.getItem(repositoryName)) || []
+		this._cards = this.getLocalStorage(repositoryName)
 	}
 
 	/**
@@ -20,15 +23,18 @@ export default class Repository {
 		return this._cards.map(card => new Card(card))
 	}
 
+	getLocalStorage = (repositoryName) => JSON.parse(localStorage.getItem(repositoryName)) || []
+
 	/**
 	* @param {Partial<Card>} value 
 	* @returns {void}
 	*/
+	/**@param {Card[]} value  */
 	set(value) {
-		localStorage.setItem(this.repositoryName, JSON.stringify(value));
 		this._cards = value
-		this._observer.notifyAll()
+		localStorage.setItem(this.repositoryName, JSON.stringify(this._cards));
+		this.notify(this._cards)
 	}
 
-	subscribe = (listener) => listener && this._observer.subscribe(listener)
+
 }
