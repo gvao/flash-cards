@@ -9,21 +9,20 @@ export default function RenderCards(cardService) {
 
     /**
      * 
-     * @param {Card} cards 
+     * @param {Card[]} cards 
     */
     this.render = (cards) => {
         this.deck.innerHTML = ''
         const elements = cards
             .map(card => {
-                const intl = new Intl.DateTimeFormat('pt-BR')
-                const li = createElement('li', { textContent: `${card.isReview ? 'review' : 'not review'}: ${intl.format(card.reviewAt)}` })
+                const li = createElement('li')
 
                 const question = createElement('h3', { textContent: card.question })
                 const answerElement = createElement('p', { textContent: card.answer })
-                const buttonDelete = createButtonElement('delete', { onclick: () => { cardService.deleteCardById(card.id) } })
+                // const buttonDelete = createButtonElement('delete', { onclick: () => { cardService.deleteCardById(card.id) } })
                 const choiceElement = createChoicesElement(
-                    () => { cardService.rightCard(card) },
-                    () => { cardService.leftCard(card) },
+                    () => { cardService.rightCard(card.id) },
+                    () => { cardService.leftCard(card.id) },
                 )
 
                 li.classList.add('deck__card')
@@ -33,14 +32,13 @@ export default function RenderCards(cardService) {
                 choiceElement.dataset.hide = true
 
                 const formQuestion = createFormAnswerElement(event => {
-                    const input = event.target.querySelector('input')
                     const button = event.target.querySelector('button')
                     answerElement.dataset.hide = false
                     choiceElement.dataset.hide = false
                     button.dataset.hide = true
                 })
 
-                li.append(question, buttonDelete, answerElement, formQuestion, choiceElement)
+                li.append(question, answerElement, formQuestion, choiceElement)
 
                 return li
             })
