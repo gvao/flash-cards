@@ -9,32 +9,43 @@ export default class Card {
      * @private
      */
     _isReview = true
+    /**@type {Date} */
+    reviewAt = null
 
     constructor(props) {
-        const { id, question, answer } = props
+        const { id, question, answer, _isReview, reviewAt, createdAt } = props
         this.question = question
         this.answer = answer
         this.id = id || generateId()
-        this.createdAt = new Date()
+        this.createdAt = createdAt || new Date()
+        this._isReview = _isReview
+        this.reviewAt = reviewAt ? new Date(reviewAt) : null
     }
 
     get isReview() {
-        if (!this.reviewAt) return true
-        this._isReview = this.reviewAt.getTime() < Date.now()
+        // if (!this.reviewAt) return true
+        // this._isReview = this.reviewAt.getTime() < Date.now()
+        // console.log(`is review`, this.reviewAt.getTime() < Date.now())
         return this._isReview
     }
+
+    getReviewStatus = () => this._isReview
 
     /**
      * @param {boolean} result 
      */
     isCorrect(result) {
-        if(!result) return
+        if (!result) return
         this.newReview()
     }
 
+    /** @private */
     newReview() {
         const now = new Date()
         const day = now.getDate()
         this.reviewAt = new Date(now.setDate(day + this.DAYS_TO_REVIEW))
+        const isNotReview = this.reviewAt.getTime() < Date.now()
+        console.log({ isNotReview });
+        this._isReview = isNotReview
     }
 }
