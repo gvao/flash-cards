@@ -3,6 +3,7 @@ import AddCard from "../domain/useCases/addCard.js"
 import removeCard from "../domain/useCases/removeCard.js"
 import { Observer } from "../utils/observer.js"
 import Card from "../domain/entity/card.js"
+import Repository from "../repository/LocalStorageRepository.js"
 import sendResult from "../domain/useCases/sendResult.js"
 
 export default class CardService {
@@ -14,60 +15,84 @@ export default class CardService {
     /**
      * @private
      */
-    _observer = Observer()
-    /**
-     * @private
-     */
+    /** @private @type {Repository} */
     _repository
+
+    _observer = Observer()
+    onChangeCards = this._observer.subscribe
+    notify = this._observer.notifyAll
 
     constructor(repository) {
         this._repository = repository
         this._cards = getCards(repository)
-        this._observer.notifyAll()
+
+        /**@param {Card[]} data */
+        const handlerRepositoryNotify = data => this.cards = data
+        this._repository.subscribe(handlerRepositoryNotify)
     }
 
     /**
      * @returns {Card[]}
      */
     get cards() {
-
-        return this._cards.filter(card => card.isReview)
+        return this._cards
     }
 
-    onChangeCards(listener) {
-        this._observer.subscribe(listener)
+    set cards(newData) {
+        this._cards = newData
+        this.notify(this._cards)
     }
 
-    addNewCard({ ...props }) {
+    /** @param {boolean} isReview  */
+    getCardsReviewIs(isReview) {
+        return this._cards.filter(card => card.isReview === isReview)
+    }
+
+    /**
+     * @typedef Params
+     * @property {string} question
+     * @property {string} answer
+     * 
+     * @param {Params} newCard 
+     * @property 
+     */
+    addNewCard(newCard) {
         const addCard = new AddCard(this._repository)
-        const card = addCard.execute(props)
-        this._cards.push(card)
-        this._observer.notifyAll()
+        addCard.execute(newCard)
+        this.notify()
     }
 
     /**
      * @param {string} id
-     */
+    */
     deleteCardById(id) {
         removeCard(id, this._repository)
-        const index = this._cards.findIndex(card => card.id === id)
-        this._cards.splice(index, 1)
-        this._observer.notifyAll()
+        this.notify()
     }
 
     /**
-     * @param {Card} card 
+     * 
+     * @param {string} id 
      */
-    rightCard(card) {
-        sendResult(card, this._repository).right()
-        this._observer.notifyAll()
+    changeReviewById(id) {
+        if (!id) throw new Error('Please provide a valid id')
+        const cards = this._repository.getAll()
+        const card = cards.find(c => c.id === id)
+        card.isCorrect(true)
+        console.log(cards)
+        this._repository.set(cards)
     }
-    /**
-     * @param {Card} card 
-     */
-    leftCard(card) {
-        sendResult(card, this._repository).left()
-        this._observer.notifyAll()
+
+    /** @param {string} id  */
+    rightCard(id) {
+        const { right } = sendResult(this._repository, id)
+        right()
     }
+    /** @param {string} id  */
+    leftCard(id) {
+        const { left } = sendResult(this._repository, id)
+        left()
+    }
+
 }
 
