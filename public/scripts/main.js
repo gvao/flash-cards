@@ -27,5 +27,4 @@ repository.subscribe(() => {
 })
 
 const cards = cardService.getCardsReviewIs(true)
-console.log(cards)
 renderCards.render(cards)
