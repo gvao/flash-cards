@@ -5,10 +5,10 @@ import CardService from "../services/CardService.js"
  * @param {CardService} cardService 
  */
 export default function RenderCards(cardService) {
+    /** @private */
     this.deck = document.getElementById('deck')
 
     /**
-     * 
      * @param {Card[]} cards 
     */
     this.render = (cards) => {
@@ -17,17 +17,20 @@ export default function RenderCards(cardService) {
             .map(card => {
                 const li = createElement('li')
 
-                const question = createElement('h3', { textContent: card.question })
+                const infoCardSection = createElement('section')
+                const questionElement = createElement('h3', { textContent: card.question })
                 const answerElement = createElement('p', { textContent: card.answer })
                 // const buttonDelete = createButtonElement('delete', { onclick: () => { cardService.deleteCardById(card.id) } })
-                const choiceElement = createChoicesElement(
+                const choiceElement = createChoicesElement([
                     () => { cardService.rightCard(card.id) },
                     () => { cardService.leftCard(card.id) },
-                )
+                ])
 
                 li.classList.add('deck__card')
-                question.classList.add('cards__question')
+                questionElement.classList.add('cards__question')
                 answerElement.classList.add('cards__answer')
+                infoCardSection.classList.add('section__info')
+
                 answerElement.dataset.hide = true
                 choiceElement.dataset.hide = true
 
@@ -38,12 +41,27 @@ export default function RenderCards(cardService) {
                     button.dataset.hide = true
                 })
 
-                li.append(question, answerElement, formQuestion, choiceElement)
+                formQuestion.appendChild(choiceElement)
+
+                infoCardSection.append(questionElement, answerElement)
+                li.append(infoCardSection, formQuestion)
 
                 return li
             })
         this.deck.append(...elements)
+        this.cards = elements
+        this.cardsInLayers()
+    }
 
+    this.cardsInLayers = () => {
+        this.cards.forEach((card, i, cards) => {
+            const percent = i / cards.length
+
+            card.style.position = 'absolute'
+            card.style.width = '50%'
+            card.style.marginLeft = `${40 * percent}%`
+            card.style.marginTop = `${10 * percent}% `
+        })
     }
 
 }
@@ -86,7 +104,7 @@ function createFormAnswerElement(onSubmit) {
         onSubmit(event)
     }
     const htmlString = `
-            <input type="text" name="answer__input" id="answer__input" autofocus placeholder="Sua resposta aqui">
+            <input type="text" name="answer__input" id="answer__input" class="answer__input" autofocus placeholder="Sua resposta aqui">
             <button type="submit">Responder</button>
         `
     form.innerHTML = htmlString
@@ -95,12 +113,14 @@ function createFormAnswerElement(onSubmit) {
 }
 
 /**
+ * @param {Element[]} elements
  * @returns {HTMLDivElement}
  */
-function createChoicesElement(right = () => { }, left = () => { }) {
+function createChoicesElement([right = () => { }, left = () => { }]) {
     const div = createElement('div')
-    const buttonAcertei = createButtonElement('acertei', { onclick: right })
-    const buttonErrei = createButtonElement('Errei', { onclick: left })
-    div.append(buttonAcertei, buttonErrei)
+    const buttonRight = createButtonElement('Acertei', { onclick: right })
+    const buttonLeft = createButtonElement('Errei', { onclick: left })
+    div.classList.add('card__choices')
+    div.append(buttonRight, buttonLeft)
     return div
 }

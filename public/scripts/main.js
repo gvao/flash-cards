@@ -24,6 +24,7 @@ formQuestion.addEventListener('submit', handlerEvent)
 repository.subscribe(() => {
     const cards = cardService.getCardsReviewIs(true)
     renderCards.render(cards)
+    renderCards.cardsInLayers()
 })
 
 const cards = cardService.getCardsReviewIs(true)
