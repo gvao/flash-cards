@@ -42,7 +42,6 @@ export default class Card {
         const day = now.getDate()
         this.reviewAt = new Date(now.setDate(day + this.DAYS_TO_REVIEW))
         const isNotReview = this.reviewAt.getTime() < Date.now()
-        console.log({ isNotReview });
         this._isReview = isNotReview
     }
 }
